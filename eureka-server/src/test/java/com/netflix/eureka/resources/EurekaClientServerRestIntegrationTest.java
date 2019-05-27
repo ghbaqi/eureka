@@ -1,14 +1,5 @@
 package com.netflix.eureka.resources;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.regex.Pattern;
-
 import com.netflix.appinfo.InstanceInfo;
 import com.netflix.appinfo.InstanceInfo.InstanceStatus;
 import com.netflix.discovery.shared.resolver.DefaultEndpoint;
@@ -24,11 +15,21 @@ import com.netflix.eureka.cluster.protocol.ReplicationList;
 import com.netflix.eureka.cluster.protocol.ReplicationListResponse;
 import com.netflix.eureka.registry.PeerAwareInstanceRegistryImpl.Action;
 import com.netflix.eureka.transport.JerseyReplicationClient;
+
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.io.File;
+import java.io.FilenameFilter;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.regex.Pattern;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -90,6 +91,8 @@ public class EurekaClientServerRestIntegrationTest {
                 serverCodecs,
                 eurekaServiceUrl
         );
+
+        Thread.sleep(Integer.MAX_VALUE);
     }
 
     @AfterClass
@@ -231,7 +234,23 @@ public class EurekaClientServerRestIntegrationTest {
 
     }
 
+
+    // EurekaClientServerRestIntegrationTest.java
     private static void startServer() throws Exception {
+        server = new Server(8080);
+        String appPath = new File("src/main/webapp").getAbsolutePath();
+
+        WebAppContext webAppCtx = new WebAppContext(appPath, "/");
+        webAppCtx.setDescriptor(new File("src/main/webapp/WEB-INF/web.xml").getAbsolutePath());
+        webAppCtx.setResourceBase(new File("src/main/resources").getAbsolutePath());
+        //        webAppCtx.setClassLoader(Thread.currentThread().getContextClassLoader());
+        server.setHandler(webAppCtx);
+        server.start();
+
+        eurekaServiceUrl = "http://localhost:8080/v2";
+    }
+
+    private static void startServerPre() throws Exception {
         File warFile = findWar();
 
         server = new Server(8080);

@@ -16,14 +16,6 @@
 
 package com.netflix.eureka;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.util.Date;
-
 import com.netflix.appinfo.ApplicationInfoManager;
 import com.netflix.appinfo.EurekaInstanceConfig;
 import com.netflix.appinfo.InstanceInfo;
@@ -33,6 +25,16 @@ import com.netflix.discovery.DefaultEurekaClientConfig;
 import com.netflix.discovery.DiscoveryClient;
 import com.netflix.discovery.EurekaClient;
 import com.netflix.discovery.EurekaClientConfig;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.Date;
 
 /**
  * Sample Eureka client that discovers the example service using Eureka and sends requests.
@@ -67,7 +69,11 @@ public class ExampleEurekaClient {
     public void sendRequestToServiceUsingEureka(EurekaClient eurekaClient) {
         // initialize the client
         // this is the vip address for the example service to talk to as defined in conf/sample-eureka-service.properties
-        String vipAddress = "sampleservice.mydomain.net";
+//        String vipAddress = "sampleservice.mydomain.net";
+
+
+        // 这个相当于 服务提供者的 applicationName
+        String vipAddress = "provider-a-01";
 
         InstanceInfo nextServerInfo = null;
         try {
@@ -114,7 +120,28 @@ public class ExampleEurekaClient {
         }
     }
 
-    public static void main(String[] args) {
+
+    /**
+     *  * This will be read by server internal discovery client. We need to salience it.
+     *  
+     */
+    private static void injectEurekaConfiguration() throws UnknownHostException {
+        String myHostName = InetAddress.getLocalHost().getHostName();
+        String myServiceUrl = "http://" + myHostName + ":8080/v2/";
+
+        System.setProperty("eureka.region", "default"); // 区域与注册中心保持一致
+        //        System.setProperty("eureka.vipAddress", "sample-service.mydomain.net");// vip地址必须与服务定义相同，否则找不到服务
+        System.setProperty("eureka.vipAddress", "provider-a-01");// vip地址必须与服务定义相同，否则找不到服务   这个相当于 服务提供者的 applicationName
+        System.setProperty("eureka.shouldFetchRegistry", "true"); // 需要注意，必须设置为true，否则无法注册
+        System.setProperty("eureka.serviceUrl.defaultZone", myServiceUrl); // 注册地址，必须与注册中心相同
+        System.setProperty("eureka.serviceUrl.default.defaultZone", myServiceUrl); // 注册地址，必须与注册中心相同
+    }
+
+    public static void main(String[] args) throws UnknownHostException {
+
+
+        injectEurekaConfiguration();
+
         ExampleEurekaClient sampleClient = new ExampleEurekaClient();
 
         // create the client
