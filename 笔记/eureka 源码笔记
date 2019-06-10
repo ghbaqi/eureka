@@ -4,3 +4,95 @@ Applications
 	Application[]
 		InstanceInfo[]
 			InstanceInfo
+			
+			
+			
+
+
+vipAddress   provider-a-01
+secure  false
+regin   default
+
+
+
+AbstractJerseyEurekaHttpClient  
+
+
+http://ZYKJ-gaoh:8080/v2/apps/SAMPLE-SERVIDE
+
+
+<application>
+<name>SAMPLE-SERVIDE</name>
+<instance>
+<instanceId>ZYKJ-gaoh</instanceId>
+<hostName>ZYKJ-gaoh</hostName>
+<app>SAMPLE-SERVIDE</app>
+<ipAddr>10.10.10.70</ipAddr>
+<status>UP</status>
+<overriddenstatus>UNKNOWN</overriddenstatus>
+<port enabled="true">8001</port>
+<securePort enabled="false">443</securePort>
+<countryId>1</countryId>
+<dataCenterInfo class="com.netflix.appinfo.InstanceInfo$DefaultDataCenterInfo">
+<name>MyOwn</name>
+</dataCenterInfo>
+<leaseInfo>
+<renewalIntervalInSecs>30</renewalIntervalInSecs>
+<durationInSecs>90</durationInSecs>
+<registrationTimestamp>1558951251680</registrationTimestamp>
+<lastRenewalTimestamp>1558951251680</lastRenewalTimestamp>
+<evictionTimestamp>0</evictionTimestamp>
+<serviceUpTimestamp>1558950625136</serviceUpTimestamp>
+</leaseInfo>
+<metadata class="java.util.Collections$EmptyMap"/>
+<appGroupName>UNKNOWN</appGroupName>
+<homePageUrl>http://ZYKJ-gaoh:8001/</homePageUrl>
+<statusPageUrl>http://ZYKJ-gaoh:8001/Status</statusPageUrl>
+<healthCheckUrl>http://ZYKJ-gaoh:8001/healthcheck</healthCheckUrl>
+<vipAddress>provider-a-01</vipAddress>
+<isCoordinatingDiscoveryServer>true</isCoordinatingDiscoveryServer>
+<lastUpdatedTimestamp>1558951251680</lastUpdatedTimestamp>
+<lastDirtyTimestamp>1558951245016</lastDirtyTimestamp>
+<actionType>ADDED</actionType>
+</instance>
+</application>
+
+
+服务调用的接口  
+AbstractJerseyEurekaHttpClient # register
+
+http://ZYKJ-gaoh:8080/v2/
+urlPath  = apps/EUREKA
+
+
+心跳接口
+apps/EUREKA/ZYKJ-gaoh
+
+
+###  服务端
+
+服务端存储的集合是一个     ConcurrentHashMap<String, Map<String, Lease<InstanceInfo>>> registry
+
+外层 key = appName
+内层 key = appId                  电脑的 域名-用户名
+内层 val = 具体的一个服务信息
+
+
+注册中心是如何响应
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
